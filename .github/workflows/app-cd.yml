@@ -10,32 +10,13 @@ run-name: App Deploy run (${{ github.event_name }} by ${{ github.actor }})
 
 # Variables
 env:
+  DOCKER_REGISTRY: sebezpoc.azurecr.io
   DOCKER_IMAGE_NAME: sebez/poc
   DOCKER_IMAGE_VERSION: 1.0.0.0
 
 # Run deploy manually
 on:
-  workflow_dispatch:
-    # TODO put in GitHub secrets.
-    inputs:
-      # Docker registry
-      dockerRegistry:
-        description: Docker registry name
-        required: true
-        type: string
-        default: sebezpoc.azurecr.io
-
-      # Docker registry user
-      dockerUser:
-        description: Docker registry user
-        required: true
-        type: string
-
-      # Docker registry secret
-      dockerSecret:
-        description: Docker registry secret
-        required: true
-        type: string
+  workflow_dispatch:    
 
 jobs:
   # Docker build job
@@ -49,12 +30,12 @@ jobs:
 
       # Docker login
       - name: Docker login
-        run: docker login -u ${{ inputs.dockerUser }} -p ${{ inputs.dockerSecret }} https://${{ inputs.dockerRegistry }}/v2/
+        run: docker login -u ${{ secrets.REGISTRY_CLIENT_ID }} -p ${{ secrets.REGISTRY_CLIENT_SECRET }} https://$DOCKER_REGISTRY/v2/
 
       # Docker build
       - name: Docker login
-        run: docker build . --file Dockerfile --tag ${{ inputs.dockerRegistry }}/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
+        run: docker build . --file Dockerfile --tag $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
 
       # Docker push
       - name: Docker push
-        run: docker push ${{ inputs.dockerRegistry }}/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
+        run: docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_VERSION
