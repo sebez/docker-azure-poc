@@ -49,7 +49,7 @@ jobs:
 
       # Docker login
       - name: Docker login
-        run: docker login -u ${{ inputs.dockerUser }} -p ${{ inputs.dockerSecret }}
+        run: docker login -u ${{ inputs.dockerUser }} -p ${{ inputs.dockerSecret }} https://${{ inputs.dockerRegistry }}/v2/
 
       # Docker build
       - name: Docker login
